@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="8" fill="#132a4a"/>
+  <!-- Dos páginas blancas: se ve como libro aunque sea chiquito -->
+  <rect x="6" y="7" width="9" height="18" rx="1.5" fill="#ffffff"/>
+  <rect x="17" y="7" width="9" height="18" rx="1.5" fill="#ffffff"/>
+  <rect x="15" y="8" width="2" height="16" fill="#132a4a"/>
+</svg>

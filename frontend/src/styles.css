@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+/* Tokens: cambiar acá y reflejar en core/theme/tokens.ts */
+@theme {
+  --color-brand: #132a4a;
+  --color-brand-hover: #1a3a63;
+  --color-brand-soft: #1e3f66;
+  --color-brand-muted: #e8eef5;
+
+  --color-surface: #f3f4f6;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #f9fafb;
+  --color-surface-overlay: rgb(0 0 0 / 0.4);
+
+  --color-ink: #111827;
+  --color-ink-muted: #6b7280;
+  --color-ink-subtle: #9ca3af;
+  --color-ink-inverse: #ffffff;
+
+  --color-line: #e5e7eb;
+  --color-line-subtle: #f3f4f6;
+
+  --color-success: #059669;
+  --color-success-soft: #ecfdf5;
+  --color-warning: #d97706;
+  --color-warning-soft: #fffbeb;
+  --color-danger: #ef4444;
+  --color-danger-soft: #fef2f2;
+
+  --color-area-cosecha: #22c55e;
+  --color-area-operaciones: #3d6f9c;
+
+  --font-sans:
+    "Plus Jakarta Sans",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.06);
+  --shadow-modal: 0 20px 40px rgb(15 23 42 / 0.16);
+
+  --spacing-sidebar: 16rem;
+  --spacing-header: 4rem;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--color-line);
+    background: var(--color-surface-raised);
+    color: var(--color-ink);
+  }
+
+  .btn-ghost:hover {
+    background: var(--color-surface);
+    border-color: var(--color-ink-subtle);
+    color: var(--color-ink);
+  }
+
+  .btn-ghost:active {
+    background: var(--color-line);
+  }
+
+  .btn-primary {
+    border: 1px solid transparent;
+    background: var(--color-brand);
+    color: var(--color-ink-inverse);
+    box-shadow: 0 1px 2px rgb(19 42 74 / 0.2);
+  }
+
+  .btn-primary:hover {
+    background: var(--color-brand-hover);
+    box-shadow: 0 2px 6px rgb(19 42 74 / 0.28);
+  }
+
+  .btn-primary:active {
+    background: var(--color-brand-soft);
+    box-shadow: none;
+  }
+
+  .badge-estado {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-pill);
+    padding: 0.125rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+  }
+
+  .badge-vigente {
+    background: var(--color-success-soft);
+    color: var(--color-success);
+  }
+
+  .badge-borrador {
+    background: var(--color-warning-soft);
+    color: var(--color-warning);
+  }
+
+  .ui-ease {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease,
+      opacity 150ms ease;
+  }
+
+  /* Solo opacity + transform (GPU). Duración alineada con AppModal (180ms). */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: var(--color-surface-overlay);
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+
+  .modal-backdrop.is-open {
+    opacity: 1;
+  }
+
+  .modal-panel {
+    width: 100%;
+    max-width: 28rem;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-modal);
+    padding: 1.5rem;
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.98);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .modal-panel.is-open {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .ui-ease,
+  .modal-backdrop,
+  .modal-panel {
+    transition: none;
+  }
+
+  .modal-panel {
+    transform: none;
+  }
+}

@@ -18,10 +18,8 @@ import {
   ProcedimientoFormModal,
 } from './procedimiento-form-modal';
 import { ProcedimientoDetalleModal } from './procedimiento-detalle-modal';
-import {
-  descargarProcedimiento,
-  exportarProcedimientosCsv,
-} from './procedimiento-files';
+import { ProcedimientoExportModal } from './procedimiento-export-modal';
+import { descargarProcedimiento } from './procedimiento-files';
 
 @Component({
   selector: 'app-procedimientos-page',
@@ -33,6 +31,7 @@ import {
     ProcedimientosListado,
     ProcedimientoFormModal,
     ProcedimientoDetalleModal,
+    ProcedimientoExportModal,
   ],
   host: { class: 'block p-6' },
   template: `
@@ -81,7 +80,13 @@ import {
           </button>
         </div>
 
-        <button type="button" class="btn btn-ghost" (click)="exportar()">
+        <button
+          type="button"
+          class="btn btn-ghost"
+          title="Elige documentos y descarga un ZIP"
+          [disabled]="store.items().length === 0"
+          (click)="abrirExport()"
+        >
           <app-icon name="export" class="text-base" />
           Exportar
         </button>
@@ -157,6 +162,15 @@ import {
       [doc]="formDoc()"
       (closeRequest)="cerrarForm()"
       (dismissed)="limpiarForm()"
+      (saved)="onGuardado($event)"
+    />
+
+    <app-procedimiento-export-modal
+      [open]="exportAbierto()"
+      [recientesIds]="recientesIds()"
+      (closeRequest)="cerrarExport()"
+      (dismissed)="cerrarExport()"
+      (exported)="onExportado()"
     />
   `,
 })
@@ -164,12 +178,15 @@ export class ProcedimientosPage {
   readonly store = inject(ProcedimientosStore);
 
   readonly vista = signal<VistaProcedimientos>('tabla');
+  readonly recientesIds = signal<ReadonlySet<string>>(new Set());
   readonly detalle = signal<Procedimiento | null>(null);
   readonly detalleAbierto = signal(false);
 
   readonly formAbierto = signal(false);
   readonly formModo = signal<FormModo>('crear');
   readonly formDoc = signal<Procedimiento | null>(null);
+
+  readonly exportAbierto = signal(false);
 
   abrirCarga(): void {
     this.formModo.set('crear');
@@ -190,6 +207,32 @@ export class ProcedimientosPage {
   limpiarForm(): void {
     this.formModo.set('crear');
     this.formDoc.set(null);
+  }
+
+  onGuardado(doc: Procedimiento): void {
+    if (this.formModo() !== 'crear') {
+      return;
+    }
+    this.recientesIds.update((prev) => {
+      const next = new Set(prev);
+      next.add(doc.id);
+      return next;
+    });
+  }
+
+  abrirExport(): void {
+    if (this.store.items().length === 0) {
+      return;
+    }
+    this.exportAbierto.set(true);
+  }
+
+  cerrarExport(): void {
+    this.exportAbierto.set(false);
+  }
+
+  onExportado(): void {
+    this.recientesIds.set(new Set());
   }
 
   ver(doc: Procedimiento): void {
@@ -215,9 +258,5 @@ export class ProcedimientosPage {
 
   descargar(doc: Procedimiento): void {
     descargarProcedimiento(this.store, doc);
-  }
-
-  exportar(): void {
-    exportarProcedimientosCsv(this.store.items());
   }
 }

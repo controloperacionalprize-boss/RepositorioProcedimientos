@@ -120,6 +120,8 @@ export class ProcedimientoFormModal {
 
   readonly closeRequest = output<void>();
   readonly dismissed = output<void>();
+  /** Emitido tras guardar con éxito (útil para auto-seleccionar al crear). */
+  readonly saved = output<Procedimiento>();
 
   readonly titulo = signal('');
   readonly area = signal<AreaProcedimiento>('COSECHA');
@@ -192,23 +194,27 @@ export class ProcedimientoFormModal {
         this.error.set('Selecciona un archivo.');
         return;
       }
-      this.store.agregar({
+      const creado = this.store.agregar({
         titulo,
         area: this.area(),
         estado: this.estado(),
         archivo,
       });
+      this.saved.emit(creado);
     } else {
       const id = this.doc()?.id;
       if (!id) {
         return;
       }
-      this.store.actualizar(id, {
+      const actualizado = this.store.actualizar(id, {
         titulo,
         area: this.area(),
         estado: this.estado(),
         archivo,
       });
+      if (actualizado) {
+        this.saved.emit(actualizado);
+      }
     }
 
     this.closeRequest.emit();

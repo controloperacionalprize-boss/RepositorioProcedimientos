@@ -126,6 +126,18 @@ export class ProcedimientosStore {
     return this.archivos.get(id);
   }
 
+  porIds(ids: Iterable<string>): Procedimiento[] {
+    const map = new Map(this.all().map((p) => [p.id, p]));
+    const out: Procedimiento[] = [];
+    for (const id of ids) {
+      const doc = map.get(id);
+      if (doc) {
+        out.push(doc);
+      }
+    }
+    return out;
+  }
+
   agregar(input: NuevoProcedimiento): Procedimiento {
     const id = crypto.randomUUID();
     const doc: Procedimiento = {
